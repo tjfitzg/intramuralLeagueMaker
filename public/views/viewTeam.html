@@ -1,0 +1,61 @@
+<div>
+	<div class="row" >
+		<h6 class="pull-right">{{account.email}}: <a ng-click="logout()">Logout?</a></h6>
+	</div>
+	<div class="row text-center">
+			<h1>{{newTeam.teamName}}</h1>
+			<h4 ng-if="newTeam.coachName">{{newTeam.coachName}}</h4>
+	</div>
+
+	<div class="row">
+		<div class="col-sm-4 text-center">
+			<h3>W-L-T:</h3>		
+		</div>
+		<div class="col-sm-4 text-center">
+			<h3>Points For:</h3>		
+		</div>
+		<div class="col-sm-4 text-center">
+			<h3>Points Against:</h3>		
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-4 text-center">
+			<h4>{{newTeam.wins}}-{{newTeam.losses}}-{{newTeam.ties}}</h4>
+		</div>
+		<div class="col-sm-4 text-center">
+			<h4>{{newTeam.pointsFor}}</h4>
+		</div>
+		<div class="col-sm-4 text-center">
+			<h4>{{newTeam.pointsAgainst}}</h4>
+		</div>
+	</div>
+	<h2>Players:</h2>
+	<div class="container">
+	  	<table class="table table-bordered">
+		    <thead>
+		      	<tr>
+					<th class="text-center">Player Name</th>
+					<th class="text-center">Number</th>
+					<th class="text-center">Position</th>
+		      	</tr>
+		    </thead>
+		    <tbody>
+			      <tr  class="text-center" ng-if="newTeam.players" ng-repeat="player in newTeam.players track by $index">
+			      		<td>{{player.playerName}}</td>
+			      		<td>{{player.playerNumber}}</td>
+			      		<td ng-if="player.playerPosition">{{player.playerPosition}}</td>
+			      		<td ng-if="!player.playerPosition">N/A</td>
+			      </tr>
+		    </tbody>
+	  	</table>
+	</div>
+
+	<!--for creating team page -->
+	<div class="row">
+		<div class="col-sm-12 text-center">
+			<button style="margin-top:10px" class="btn btn-primary" ng-click="back()">Back</button>		
+		</div>
+	</div>
+	
+	
+</div>

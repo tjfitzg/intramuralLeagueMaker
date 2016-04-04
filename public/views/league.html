@@ -1,0 +1,505 @@
+<div ng-if="loaded == 1 && loggedIn == 1">
+	<div class="row" >
+		<h6 class="pull-right">{{account.email}}: <a ng-click="logout()">Logout?</a></h6>
+	</div>
+	<div class="row text-center">
+		<span class="tinyText">League:&nbsp;</span>
+		<h1 style="margin-top:0px">{{league.leagueName}}</h1>
+	</div>	
+	<!-- teams table -->
+	<div class="row" ng-if="!(league.allMatchupsSaved == 1)">
+	  	<h2>Manage Teams:</h2>
+	  	<div class="row" ng-if="teams.length < 3" >
+	  		<div class="col-sm-3"></div>
+	  		<div class="col-sm-6 text-center">
+	  			<p>At least 3 created teams are necessary to move on to the next step.</p>
+	  		</div>
+	  		<div class="col-sm-3"></div>
+	  	</div>
+		<div class="row" ng-if="teams">
+			<div class="col-sm-2"></div>
+			<div class="col-sm-8 text-center">
+			  <table class="table table-bordered">
+			    <thead>
+			      <tr>
+			        <th class="text-center" ><i>Team</i></th>
+			        <th class="text-center"><i>Games Assigned</i></th>
+			        <th class="text-center"><i># of Players</i></th>
+			        <th></th>
+			      </tr>
+			    </thead>
+			    <tbody>
+		      		<tr ng-repeat="team in teams track by $index">
+		        		<td class="text-center">{{team.teamName}}</td>
+		        		<td class="text-center">{{team.gamesAssigned}}</td>
+		        		<td class="text-center">{{team.players.length}}</td>
+		        		<td class="text-center">
+		        			<button class="btn btn-primary" ng-click="editTeam($index)">Edit</button>
+		        		</td>
+		      		</tr>
+			    </tbody>
+			  </table>
+		  	</div>
+			<div class="col-sm-2"></div>
+		</div>
+		<div ng-if="!teams">	<p>No teams created yet...</p>	</div>
+		
+		<div class = "row" ng-if="!league.games">
+			<div class="col-sm-4"></div>
+			<div class="col-sm-4 text-center">
+				<button style="margin-top:10px" class="btn btn-primary" ng-click="addTeam()">Add Team</button>
+			</div>
+			<div class="col-sm-4"></div>
+		</div>
+	</div>
+	<!-- games settings -->
+	<div class ="row" ng-if="teams.length >= 3 && !(league.allMatchupsSaved == 1)">
+	  	<h2>League Settings:</h2>
+		<div class="row">
+	  		<div class="row">
+				<div class="col-sm-4"></div>
+				<div class="col-sm-4">
+			  		<div class="row text-center">
+			  			<h3>Games Per Team:</h3>
+						<p ng-if="league.gamesPerTeam" >{{league.gamesPerTeam}}</p>
+						<h5 ng-if="!league.gamesPerTeam">Must be an even value of games</h5>
+					</div>
+					<div class="row text-center">
+						<form ng-if="!league.gamesPerTeam">
+							<div class="form-group">
+					  			<input type="number" min="2" defaultValue="2" step="2" ng-model="gamesPerTeamEntry.text">
+							</div>
+						</form>
+					</div>
+				</div>
+				<div class="col-sm-4"></div>
+			</div>
+			<!--
+			<div class="row">
+				<div class="col-sm-4"></div>
+				<div class="col-sm-4">
+					<div class="row text-center">
+						<h3>Teams In Playoffs:</h3>
+						<p ng-if="league.playoffTeams">{{league.playoffTeams}}</p>
+					</div>
+					<div class="row text-center">
+					    <div class="btn-group" dropdown keyboard-nav ng-if="!league.games">
+					        <button id="simple-btn-keyboard-nav" type="button" class="btn btn-primary" dropdown-toggle>
+					            <p ng-if="playoffSelection == -1">Select</p>
+					            <p ng-if="playoffSelection > -1">{{playoffSelection}}</p>
+					            <span class="caret"></span>
+					        </button>
+					        <ul class="dropdown-menu" role="menu" aria-labelledby="simple-btn-keyboard-nav">
+					        	<li ng-repeat="option in playoffOptions track by $index" role="menuitem">
+									<a ng-click="changePlayoffOption($index)">{{option}}</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-4"></div>
+			</div>
+			-->
+			<div class="row">
+				<p>&nbsp;</p>
+			</div>
+			<div class = "row" ng-if="!league.games">
+				<div class="col-sm-4"></div>
+				<div class="col-sm-4 text-center">
+					<button style="margin-top:10px" class="btn btn-secondary" ng-click="saveSettings()">Save Settings</button>
+				</div>
+				<div class="col-sm-4"></div>
+			</div>
+		</div>
+	</div>
+
+	<!-- games listing -->
+	<div  class="row" ng-if="league.games && !(league.allMatchupsSaved == 1)">
+  		<h2>Configure Games:</h2>
+	  	<div class="row">
+			    	<div class="col-sm-3"></div>
+			    	<div class="col-sm-6 text-center">
+				    	<p><b>Team 1, Team 2, and Date must be set for each game to continue.</b></p>
+				    </div>
+			    	<div class="col-sm-3"></div>
+			    </div>
+	    <div class="container">
+	    	<accordion close-others="oneAtATime" >
+			    <accordion-group is-open="status.open" ng-repeat="game in league.games track by $index" ng-init="gameIndex = $index">
+			        <accordion-heading>
+			             <small>&nbsp;</small>Game {{$index + 1}}
+			             <i class="pull-left glyphicon" ng-class="{'glyphicon-thumbs-up': game.team1 != -1 && game.team2 != -1 && game.date}"></i>
+			             <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !status.open}"></i>
+			        </accordion-heading>
+			        <div class="row text-center">
+			        	<b>Game Date & Time:</b>&nbsp;
+			        	<p ng-if="game.date"> {{ game.date | date:"MM/dd/yyyy 'at' h:mma" }}</p>
+						<i ng-click="openCalendarModal(gameIndex)" class="glyphicon glyphicon-calendar"></i>
+			        </div>
+			        <div class="row">&nbsp;</div>
+			        
+			        <div class="row text-center">	
+			        	<b>Location:</b>&nbsp;        
+		            	<input type="text" ng-model="game.gameLocation" maxlength="50">
+		            </div>
+			        <div class="row">&nbsp;</div>
+
+			        <div class="row">
+				        <div class="col-sm-2"></div>
+					    <!-- team1 dropdown-->
+				        <div class="col-sm-3 text-center">
+						    <div class="btn-group" dropdown keyboard-nav>
+						        <button id="simple-btn-keyboard-nav" type="button" class="btn btn-primary" dropdown-toggle>
+						            <p ng-if="game.team1 == -1">Team1</p>
+						            <p ng-if="game.team1 > -1 ">{{league.teams[game.team1].teamName}}</p>
+						            <span class="caret"></span>
+						        </button>
+						        <ul class="dropdown-menu" role="menu" aria-labelledby="simple-btn-keyboard-nav">
+						            <li ng-repeat="team in league.teams track by $index" role="menuitem">
+						            	<div ng-if="$index != game.team1  && $index != game.team2 && league.teams[$index].gamesAssigned < league.gamesPerTeam">						            		
+						            		<a ng-click="team1Change($index,gameIndex,game.team1)">{{team.teamName}}</a>
+						            	</div>
+						            </li>	
+						            <li ng-if="game.team1 > -1" role="menuitem">
+						            	<a ng-click="blankteam1(game.team1,gameIndex)">Unselect Team</a>
+						            </li>	
+						        </ul>
+						    </div>
+						</div>
+						<!-- vs  -->
+					    <div class="col-sm-2 text-center" style="margin-top: 10px;">
+					    	<p>VS</p>
+					    </div>
+					    <!-- team2 dropdown-->
+					    <div class="col-sm-3 text-center">
+						    <div class="btn-group" dropdown keyboard-nav>
+						        <button id="simple-btn-keyboard-nav" type="button" class="btn btn-secondary" dropdown-toggle>
+						            <p ng-if="game.team2 == -1">Team2</p>
+						            <p ng-if="game.team2 > -1">{{league.teams[game.team2].teamName}}</p>
+						            <span class="caret"></span>
+						        </button>
+						        <ul class="dropdown-menu" role="menu" aria-labelledby="simple-btn-keyboard-nav">
+						            <li ng-repeat="team in league.teams track by $index" role="menuitem">
+						            	<div ng-if="$index != game.team1  && $index != game.team2 && league.teams[$index].gamesAssigned < league.gamesPerTeam">
+						            		<a ng-click="team2Change($index,gameIndex,game.team2)">{{team.teamName}}</a>
+						            	</div>
+						            </li>
+						            <li ng-if="game.team2 > -1" role="menuitem">
+						            	<a ng-click="blankteam2(game.team2,gameIndex)">Unselect Team</a>
+						            </li>			  
+						        </ul>
+						    </div>
+						</div>
+
+				        <div class="col-sm-2"></div>
+					</div> 
+		</div>
+	    <div ng-if="league.allMatchups != 1">
+		    <div class="row">
+		    	<div class="col-sm-3"></div>
+		    	<div class="col-sm-6 text-center">
+			    	<p>Save the current league matchup entries</p>
+			    </div>
+		    	<div class="col-sm-3"></div>
+		    </div>
+		    <div class="row text-center">
+				<button style="margin-top:10px" class="btn btn-primary" ng-click="saveMatchupEntries()">Save</button>
+			</div>
+		</div>	
+	    <div ng-if="league.allMatchups == 1">
+		    <div class="row">
+		    	<div class="col-sm-3"></div>
+		    	<div class="col-sm-6 text-center">
+			    	<p>Click the button below to confirm the matchups, locations, & Dates/Times of games. Currently you will not be able to change these settings</p>
+			    </div>
+		    	<div class="col-sm-3"></div>
+		    </div>
+		    <div class="row text-center">
+				<button style="margin-top:10px" class="btn btn-primary" ng-click="saveMatchups()">Confirm</button>
+			</div>
+		</div>	
+	</div>
+	<!-- game scores and standings-->
+	<div ng-if="league.allMatchupsSaved == 1 && league.advancedToFinals != 1">
+		<!-- input game scores-->
+		<h2>Current League Standings</h2>
+		<div class="row">
+			<div class="col-sm-1"></div>
+			<div class="col-sm-10 text-center">
+			  <table class="table table-bordered">
+			    <thead>
+			      <tr>
+			        <th class="text-center" ><i>Place</i></th>
+			        <th class="text-center" ><i>Team</i></th>
+			        <th class="text-center"><i>Wins</i></th>
+			        <th class="text-center"><i>Losses</i></th>
+			        <th class="text-center"><i>Ties</i></th>
+			        <th class="text-center"><i>Games Remaining</i></th>
+			        <th class="text-center"><i>Points For</i></th>
+			        <th class="text-center"><i>Points Against</i></th>
+			        <th class="text-center"><i>Differential</i></th>
+			      </tr>
+			    </thead>
+			    <tbody>
+		      		<tr ng-repeat="team in teams | orderBy: ['-wins','+losses','-ties','-differential','-pointsFor','+pointsAgainst','+random'] track by $index">
+		        		<td class="text-center">{{$index + 1}}</td>
+		        		<td class="text-center" ng-click="viewTeam(team.teamName)"><a>{{team.teamName}}</a></td>
+		        		<td class="text-center">{{team.wins}}</td>
+		        		<td class="text-center">{{team.losses}}</td>
+		        		<td class="text-center">{{team.ties}}</td>
+		        		<td class="text-center">{{team.gamesAssigned - team.gamesPlayed}}</td>
+		        		<td class="text-center">{{team.pointsFor}}</td>
+		        		<td class="text-center">{{team.pointsAgainst}}</td>
+		        		<td class="text-center">{{team.differential}}</td>
+		      		</tr>
+			    </tbody>
+			  </table>
+		  	</div>
+			<div class="col-sm-1"></div>
+		</div>
+		<h6 class="text-center"><a tooltip-html="standingsTooltip">How are standings calculted?</a></h6>
+  		<h2>Input Game Scores:</h2>
+	    <div class="row text-center" ng-if="league.allScoresEntered != 1">
+			<button style="margin-top:5px;margin-bottom:10px" class="btn btn-primary" ng-click="saveGameScores()">Save All Scores</button>	
+		</div>
+	    <div class="row text-center" ng-if="league.allScoresEntered == 1">
+	    	<div class="col-sm-2"></div>
+	    	<div class="col-sm-3 text-center">
+	    		<button style="margin-top:5px;margin-bottom:10px" class="btn btn-primary" ng-click="advanceToFinals()">Advance To Finals</button>		    		
+	    	</div>
+	    	<div class="col-sm-1"></div>
+	    	<div class="col-sm-3 text-center">
+	    		<button style="margin-top:5px;margin-bottom:10px" class="btn btn-secondary" ng-click="saveGameScores()">Save All Scores</button>		    		
+	    	</div>
+	    	<div class="col-sm-2"></div>
+	    </div>
+  		<div class="row text-center"><p>Enter score for each game below</p></div>
+		<div class="row">
+	    	<accordion close-others="oneAtATime" >
+			    <accordion-group is-open="status.open" ng-repeat="game in league.games | orderBy: '+date' track by $index">
+			        <accordion-heading class="text-center">
+			             <b>Game {{$index + 1}}:</b>&nbsp;{{league.teams[game.team1].teamName}}&nbsp;VS&nbsp;{{league.teams[game.team2].teamName}}&nbsp;&nbsp;<i>{{ game.date | date:"MM/dd/yyyy 'at' h:mma" }}</i>
+			             <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !status.open}"></i>
+			        </accordion-heading>
+			        <div class="row text-center">
+			        	<b>Game Date & Time:</b>&nbsp;
+			        	<p> {{ game.date | date:"MM/dd/yyyy 'at' h:mma" }}</p>
+			        </div>
+			        <div class="row">&nbsp;</div>
+			        
+			        <div class="row text-center" ng-if="game.gameLocation">	
+			        	<b>Location:</b>&nbsp;  
+			        	<p>{{game.gameLocation}}</p>      
+		            </div>
+			        <div class="row text-center" ng-if="game.gameLocation">
+			        	<p><b>Enter Scores Below:</b></p>
+		        	</div>
+			        <!-- team names displayed -->
+			        <div class="row">
+				        <div class="col-sm-2">
+				       		<div class="row"></div>
+				        </div>
+				        <div class="col-sm-3 text-center">
+				        	<div class="row">
+				        		<h3>{{league.teams[game.team1].teamName}}</h3>	
+				        		<div class="form-group">
+					  				<input class="text-center" type="number" min="0" ng-model="game.team1ScoreHolder" ng-change="scoreChange(game.gameId)">
+								</div>
+							</div>
+						</div>
+						<!-- vs  -->
+					    <div class="col-sm-2 text-center" style="margin-top: 10px;">
+				        	<div class="row">
+					    		<p>&nbsp;</p>
+					    	</div>
+					    </div>
+					    <div class="col-sm-3 text-center">
+					    	<div class="row">
+				        		<h3>{{league.teams[game.team2].teamName}}</h3>
+					    		<div class="form-group">
+						  			<input class="text-center" type="number" min="0" ng-model="game.team2ScoreHolder" ng-change="scoreChange(game.gameId)">
+								</div>
+							</div>
+						</div>
+				        <div class="col-sm-2">
+				       		<div class="row"></div>
+				        </div>
+					</div> 
+			        <!-- team scores entered -->
+
+			    </accordion-group>
+		    </accordion>
+	    </div>
+	    <div class="row text-center" ng-if="league.allScoresEntered != 1">
+			<button style="margin-top:10px" class="btn btn-secondary" ng-click="saveGameScores()">Save All Scores</button>	
+		</div>
+	    <div class="row text-center" ng-if="league.allScoresEntered == 1">
+	    	<div class="col-sm-2"></div>
+	    	<div class="col-sm-3 text-center">
+	    		<button style="margin-top:10px" class="btn btn-secondary" ng-click="advanceToFinals()">Advance To Finals</button>		    		
+	    	</div>
+	    	<div class="col-sm-1"></div>
+	    	<div class="col-sm-3 text-center">
+	    		<button style="margin-top:10px" class="btn btn-primary" ng-click="saveGameScores()">Save All Scores</button>		    		
+	    	</div>
+	    	<div class="col-sm-2"></div>
+	    </div>
+	</div>
+	<div class="container" ng-if="league.advancedToFinals == 1">
+		<h2 style="margin-bottom:5px;">Championship Matchup</h2>
+		<div class="row text-center">
+        	<b>Game Date & Time:</b>&nbsp;
+        	<p ng-if="league.championship.date"> {{ league.championship.date | date:"MM/dd/yyyy 'at' h:mma" }}</p>
+			<i ng-click="openCalendarModalChamp()" class="glyphicon glyphicon-calendar"></i>
+		</div>
+        <div class="row text-center" style="margin-top:10px">	
+        	<b>Location:</b>&nbsp;        
+        	<input type="text" ng-model="league.championship.gameLocation" maxlength="50">
+        </div>
+        <div class="row">
+	        <div class="col-sm-2">
+	       		<div class="row"></div>
+	        </div>
+	        <div class="col-sm-3 text-center">
+		    	<div ng-repeat="team in league.teams track by $index">
+		        	<div class="row" ng-if="team.finalRanking == 0">
+		        		<div ng-init="league.championship.team1 = $index">
+			        		<h3>{{team.teamName}}</h3>	
+			        		<div class="form-group">
+				  				<input class="text-center" type="number" min="0" ng-model="league.championship.team1Score" ng-change="championshipScores()">
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- vs  -->
+		    <div class="col-sm-2 text-center" style="margin-top: 10px;">
+	        	<div class="row">
+		    		<h4 style="padding-top:20px;">VS</h4>
+		    	</div>
+		    </div>
+		    <div class="col-sm-3 text-center">
+		    	<div ng-repeat="team in league.teams">
+		        	<div class="row" ng-if="team.finalRanking == 1">
+		        		<div ng-init="league.championship.team2 = $index">
+			        		<h3>{{team.teamName}}</h3>	
+			        		<div class="form-group">
+				  				<input class="text-center" type="number" min="0" ng-model="league.championship.team2Score" ng-change="championshipScores()">
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+	        <div class="col-sm-2">
+	       		<div class="row"></div>
+	        </div>
+		</div> 
+		<div ng-if="league.championship.winner >= 0" style="margin-bottom=10px;">
+			<h1 class="text-center">League Champion:</h1>
+			<h2 class="text-center" style="color:#9068be" >{{league.teams[league.championship.winner].teamName}}</h2>
+		</div>
+		<div ng-if="league.championship.winner == -1" style="margin-bottom=10px;">
+			<h1 class="text-center">League Champions:</h1>
+			<h2 class="text-center" style="color:#9068be">{{league.teams[league.championship.team1].teamName}} & {{league.teams[league.championship.team2].teamName}}</h2>
+		</div>
+		<div class="row">
+		    <div class="row text-center">
+				<button style="margin-top:10px" class="btn btn-primary" ng-click="saveMatchupEntries()">Save</button>
+			</div>			
+		</div>
+		<h2>Final League Standings</h2>
+		<div class="row">
+			<div class="col-sm-1"></div>
+			<div class="col-sm-10 text-center">
+			  <table class="table table-bordered">
+			    <thead>
+			      <tr>
+			        <th class="text-center" ><i>Place</i></th>
+			        <th class="text-center" ><i>Team</i></th>
+			        <th class="text-center"><i>Wins</i></th>
+			        <th class="text-center"><i>Losses</i></th>
+			        <th class="text-center"><i>Ties</i></th>
+			        <th class="text-center"><i>Points For</i></th>
+			        <th class="text-center"><i>Points Against</i></th>
+			        <th class="text-center"><i>Differential</i></th>
+			      </tr>
+			    </thead>
+			    <tbody>
+		      		<tr ng-repeat="team in teams | orderBy: ['-wins','+losses','-ties','-differential','-pointsFor','+pointsAgainst','+random'] track by $index" ng-init="team.finalRanking = $index">
+		        		<td class="text-center">{{$index + 1}}</td>
+		        		<td class="text-center" ng-click="viewTeam(team.teamName)"><a>{{team.teamName}}</a></td>
+		        		<td class="text-center">{{team.wins}}</td>
+		        		<td class="text-center">{{team.losses}}</td>
+		        		<td class="text-center">{{team.ties}}</td>
+		        		<td class="text-center">{{team.pointsFor}}</td>
+		        		<td class="text-center">{{team.pointsAgainst}}</td>
+		        		<td class="text-center">{{team.differential}}</td>
+		      		</tr>
+			    </tbody>
+			  </table>
+		  	</div>
+			<div class="col-sm-1"></div>
+		</div>
+		<h6 class="text-center"><a tooltip-html="standingsTooltip">How are standings calculted?</a></h6>
+		<div class="row" style="margin-top:5px;">
+	    	<accordion close-others="oneAtATime" >
+			    <accordion-group is-open="status.open" ng-repeat="game in league.games | orderBy: '+date' track by $index">
+			        <accordion-heading class="text-center">
+			             <b>Game {{$index + 1}}:</b>&nbsp;{{league.teams[game.team1].teamName}}&nbsp;VS&nbsp;{{league.teams[game.team2].teamName}}&nbsp;&nbsp;<i>{{ game.date | date:"MM/dd/yyyy 'at' h:mma" }}</i>
+			             <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !status.open}"></i>
+			        </accordion-heading>
+			        <div class="row text-center">
+			        	<b>Game Date & Time:</b>&nbsp;
+			        	<p> {{ game.date | date:"MM/dd/yyyy 'at' h:mma" }}</p>
+			        </div>
+			        <div class="row">&nbsp;</div>
+			        
+			        <div class="row text-center" ng-if="game.gameLocation">	
+			        	<b>Location:</b>&nbsp;  
+			        	<p>{{game.gameLocation}}</p>      
+		            </div>
+			        <!-- team names displayed -->
+			        <div class="row">
+				        <div class="col-sm-2">
+				       		<div class="row"></div>
+				        </div>
+				        <div class="col-sm-3 text-center">
+				        	<div class="row text-center">
+				        		<h3>{{league.teams[game.team1].teamName}}</h3>
+				  				<h5 ng-if="game.team1Score >= 0">{{game.team1Score}}</h5>
+				  				<h5 ng-if="!game.team1Score">N/A</h5>
+							</div>
+						</div>
+						<!-- vs  -->
+					    <div class="col-sm-2 text-center" style="margin-top: 10px;">
+				        	<div class="row">
+					    		<p>To</p>
+					    	</div>
+					    </div>
+					    <div class="col-sm-3 text-center">
+					    	<div class="row text-center">
+				        		<h3>{{league.teams[game.team2].teamName}}</h3>
+				  				<h5 ng-if="game.team2Score">{{game.team2Score}}</h5>
+				  				<h5 ng-if="!game.team2Score">N/A</h5>
+							</div>
+						</div>
+				        <div class="col-sm-2">
+				       		<div class="row"></div>
+				        </div>
+					</div> 
+			        <!-- team scores entered -->
+
+			    </accordion-group>
+		    </accordion>
+	    </div>
+	</div>
+</div>
+
+
+
+
+<!-- ng-if=" !account || isUndefined(account) "-->
+<div ng-if="0">
+	<p>not logged in suckah</p>
+</div>
+

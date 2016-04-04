@@ -1,0 +1,79 @@
+/* Styles go here */
+
+body { background: #F7F7F7 !important;}
+
+.ng-cloak {
+    display: none !important;
+}
+
+.navbar-header {
+    float: left;
+    padding: 0px;
+    text-align: center;
+    width: 100%;
+}
+
+.navbar-inverse .navbar-brand {
+	float:none;
+	color:white !important;
+}
+
+.collapse.in {
+    height: auto;  /* this style already exists in bootstrap.css */
+    overflow: visible;  /* this one doesn't. Add it! */
+    
+}
+
+.panel-group .panel
+{
+  overflow: visible;
+}
+
+.greentext
+{
+	color: green;
+}
+
+.col-centered{
+    float: none;
+    margin: 0 auto;
+}
+
+.btn{
+  border:1px solid; /* this was 1px earlier */
+  border-color:black !important;
+ }
+
+.btn-primary, .btn-primary:active, .btn-primary:visited {
+    background-color: #6ECCD3 !important;
+    color: black !important;
+ 	border-color:black !important;
+}
+
+.btn-primary:hover{
+	background-color: #6ECCD3 !important;
+    color: white !important;
+    border-color:black !important;
+  	border:2px solid; 
+}
+
+.btn-secondary, .btn-secondary:active, .btn-secondary:visited {
+    background-color: #8368BE !important;
+    color:white;
+}
+
+.btn-secondary:hover{
+	background-color: #8368BE !important;
+    color: black !important;
+  	border:2px solid; 
+}
+
+.panel-default >.panel-heading {
+    background-color: #9C9C9C;
+}
+
+.tinyText{
+	color:gray;
+	font-size: 15px;
+  margin-bottom: 0px;
+}

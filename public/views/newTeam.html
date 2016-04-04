@@ -1,0 +1,87 @@
+<div>
+	<div class="row" >
+		<h6 class="pull-right">{{account.email}}: <a ng-click="logout()">Logout?</a></h6>
+	</div>
+	<h2>Team Name:</h2>
+	<div class="form-group">
+  		<input type="text" class="form-control" id="teamName" ng-model="newTeam.teamName" maxlength="50">
+	</div>
+
+	<h2>Coach Name:</h2>
+	<div class="form-group">
+  		<input type="text" class="form-control" id="coachName" ng-model="newTeam.coachName" maxlength="50">
+	</div>
+	<h2>Players:</h2>
+	<div class="row">
+		<div class="col-sm-2"></div>
+		<div class="col-sm-8 text-center">
+			<small><b>Enter player info and click add player. Name and number is required.</b></small>
+		</div>
+		<div class="col-sm-2"></div>
+	</div>
+	<div class="container">
+	  	<table class="table table-bordered">
+		    <thead>
+		      	<tr>
+					<th></th>
+					<th class="text-center">Player Name</th>
+					<th class="text-center">Number</th>
+					<th class="text-center">Position</th>
+		      	</tr>
+		    </thead>
+		    <tbody>
+			      <tr  class="text-center" ng-if="newTeam.players" ng-repeat="player in newTeam.players track by $index">
+						<td>
+							<button style="margin-top:20px" class="btn btn-primary" ng-click="selected.value = $index; deletePlayer()">Delete Player</button>
+						</td>
+			      		<td>{{player.playerName}}</td>
+			      		<td>{{player.playerNumber}}</td>
+			      		<td>{{player.playerPosition}}</td>
+			      </tr>
+			      <tr>
+					<td class="text-center">
+						<button class="btn btn-secondary" ng-click="addPlayer()">Add Player</button>
+					</td>
+					<td>
+						<div class="form-group">
+							<input type="text" class="form-control" id="playerName" ng-model="newPlayer.playerName" maxlength="50" > 
+						</div>
+					</td>
+					<td>
+						<div class="form-group">
+							<input type="number" class="form-control" min="1" max="99" id="playerNumber" ng-model="newPlayer.playerNumber" >
+						</div>
+					</td>
+					<td>
+						<div class="form-group">
+							<input type="text" class="form-control" id="playerPosition" ng-model="newPlayer.playerPosition" maxlength="50">
+						</div>
+					</td>
+			      </tr>
+		    </tbody>
+	  	</table>
+	</div>
+
+	<!--for creating team page -->
+	<div class="row" ng-if="editing == false">
+		<div class="col-sm-12 text-center">
+			<button style="margin-top:10px" class="btn btn-primary" ng-click="saveTeam()">Save Team</button>		
+		</div>
+	</div>
+	
+	<!--for editing team page -->
+	<div class="row" ng-if="editing == true">
+		<div class="col-sm-3" ng-if="!league.games"></div>
+		<div class="col-sm-3 text-center" ng-if="!league.games">
+			<button style="margin-top:10px" class="btn btn-primary" ng-click="saveTeam()">Save Team</button>		
+		</div>
+		<div class="col-sm-3 text-center" ng-if="!league.games">
+			<button style="margin-top:10px" class="btn btn-secondary" ng-click="deleteTeam()">Delete Team</button>
+		</div>
+		<div class="col-sm-3" ng-if="!league.games"></div>
+		<div class="col-sm-12 text-center" ng-if="league.games">
+			<button style="margin-top:10px" class="btn btn-primary" ng-click="saveTeam()">Save Team</button>		
+		</div>
+	</div>
+	
+</div>

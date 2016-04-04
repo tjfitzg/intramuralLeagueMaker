@@ -1,0 +1,135 @@
+<div ng-if="loaded == 1">
+	<div class="row" ng-if="loggedIn == 1">
+		<h6 class="pull-right">{{account.email}}: <a ng-click="logout()">Logout?</a></h6>
+	</div>
+
+	<div class="row">
+		<div class = "col-sm-2"></div>
+		<div class = "col-sm-8">
+			<h2 class="text-center" >Administrators</h2>
+		</div>
+		<div class = "col-sm-2"></div>
+	</div>
+
+	<div ng-if="loggedIn == 0">
+						
+		<div class="row">
+			<div class = "col-sm-2"></div>
+			<div class = "col-sm-8">
+				<h4>Login/Register:</h4>
+				<h5>An account is needed to create leagues or manage existing leagues</h5>	
+			</div>
+			<div class = "col-sm-2"></div>
+		</div>
+		<div class="row">
+			<div class = "col-sm-2"></div>
+			<div class = "col-sm-8">
+				<tabset>
+					<tab heading="Login">
+						<div class="row" style="margin-top:10px;">
+						    <p>
+								<h5 style="margin-top:0px;padding-top:1px;"><b>Email:</b></h5>
+								<input class="form-control" type="email" ng-model="userDetails.email" maxlength="50" required> 
+						    </p> 
+						</div>
+						<div class="row">
+						    <p>
+								<h5 style="margin-top:0px;padding-top:1px;"><b>Password:</b></h5>
+								<input class="form-control" type="password" ng-model="userDetails.password" maxlength="50" required> 
+						    </p> 
+						</div>
+						<div class="row text-center">
+							<button style="margin-top:20px" class="btn btn-primary" ng-click="login()">Login</button>
+						</div>
+						<div class="row text-center" style="margin-top:3px;">
+								<h5 ng-if="loginFail == 1" style="color:red;">{{loginFailMsg}}</h5>
+						</div>
+					</tab>
+					<tab heading="Register">
+						<div class="row">
+						    <p >
+								<h5 style="margin-top:0px;padding-top:1px;"><b>Email:</b></h5>
+								<input class="form-control" type="email" ng-model="userDetails.email" maxlength="50" required> 
+								<h5 class="text-center"><small><i>Feel free to use a made up email for anonymity (just remember it). There is no account verification or password resetting enabled for this reason</i></small></h5>
+						    </p> 
+						</div>
+						<div class="row">
+						    <p>
+								<h5 style="margin-top:0px;padding-top:1px;"><b>Password:</b></h5>
+								<input class="form-control" type="password" ng-model="userDetails.password" maxlength="50" required> 
+						    </p> 
+						</div>
+						<div class="row">
+						    <p>
+								<h5 style="margin-top:0px;padding-top:1px;"><b>Repeat Password:</b></h5>
+								<input class="form-control" type="password" ng-model="userDetails.password2" maxlength="50" required> 
+						    </p> 
+						</div>
+						<div class="row text-center">
+							<button style="margin-top:20px" class="btn btn-primary" ng-click="register()">Register</button>
+						</div>
+						<div class="row text-center" style="margin-top:3px;">
+								<h5 ng-if="registerFail == 1" style="color:red;">{{registerFailMsg}}</h5>
+						</div>
+					</tab>
+				</tabset>
+			</div>
+			<div class = "col-sm-2"></div>
+		</div>
+	</div>
+	<div ng-if="loggedIn == 1">
+		<div class = "row">
+		  <div class = "col-sm-2"></div>
+			<div class = "col-sm-8">
+				<h4>Create New League:</h4>
+			    <p>
+					<h5 style="margin-top:0px;padding-top:1px;"><b>League Name: </b><i>Enter your desired league name</i></h5>
+					<input id="leagueName" class="form-control" type="text" ng-model="league.leagueName" maxlength="50" required> 
+			    </p>  
+			</div>
+			<div class = "col-sm-2"></div>
+		</div>
+		<div class="row text-center" style="margin-top:0px">
+			<button style="margin-top:10px" class="btn btn-primary" ng-click="createLeague(league)">Create League</button>
+		</div>
+		<div class="row" ng-if="!account.customData.leagues == 0" style="margin-top:5px;">
+		  	<div class = "col-sm-2"></div>
+			<div class = "col-sm-8">
+				<h4>Manage Existing Leagues:</h4>
+				<div class="text-center" ng-repeat="myLeague in account.customData.leagues track by $index">
+					<button ng-if="$index % 2 == 0" style="margin-top:10px" class="btn btn-secondary" ng-click="goToLeague(myLeague.leagueName)">{{myLeague.leagueName}}</button>
+					<button ng-if="$index % 2 == 1" style="margin-top:10px" class="btn btn-primary" ng-click="goToLeague(myLeague.leagueName)">{{myLeague.leagueName}}</button>
+				</div>
+			</div>
+		  	<div class = "col-sm-2"></div>
+		</div>
+	</div>
+
+	<div class="row" style="margin-top:10px;">
+		<div class = "col-sm-2"></div>
+		<div class = "col-sm-8">
+			<h2 class="text-center" >Players</h2>
+		</div>
+		<div class = "col-sm-2"></div>
+	</div>
+
+	<div class = "row" >
+		<div class = "col-sm-2"></div>
+		<div class = "col-sm-8">
+			<h4>Find Your League:</h4>
+		    <p>
+		    	<h5 style="margin-top:0px;padding-top:1px;"><b>League Name: </b><i>Enter league name exactly as given to you by your league administrator</i></h5>
+		    	<input id="leagueName" class="form-control" type="text" ng-model="league2.leagueName" maxlength="50" required> 
+		    </p>  
+			<div class="row text-center" style="margin-top:3px;">
+					<h5 ng-if="noLeagueFound == 1" style="color:red;">{{noLeagueFoundMsg}}</h5>
+			</div>
+		</div>
+		<div class = "col-sm-2"></div>
+	</div>
+	<div class="row text-center" style="margin-top:0px">
+			<button style="margin-top:10px" class="btn btn-secondary" ng-click="getLeague(league2)">Get League</button>
+	</div>
+
+
+</div>

@@ -1,12 +1,5 @@
-— Edit: 
+The intramural league maker can be used to create and manage "intramural" sport leagues. Administrators can create an account where they then manage a league or several leagues. The administrator creates teams, lays out the schedule, and then inputs the scores of each game. The web app handles the league standings and hosts all of the league records. The administrators simply need to supply the league players with a link to view the league at any time. Or a player can search for their league at the main page.
 
-Heroku mean-contactlist demo app forked and modified to implement modular design
-
-The services and controllers are all in separate files.  Modifications to the code was necesarry to modularize
-
-— endEdit
-# mean-contactlist
-
-Contact List is a RESTful API server and web application built with the MEAN stack. It is a simple example that aims to concisely demonstrate basic MEAN and REST architecture. You can find the full tutorial here: https://devcenter.heroku.com/articles/mean-apps-restful-api.
+NOTE: The idea for this is web app is not original. The purpose of this web app is entirely to serve as a proof of concept of my web development capabilities. The web app is still under development. If you find any bugs I would greatly appreciate it if you would let me know. 
 
 

@@ -1,6 +1,7 @@
 Tyler Fitzgerald - Intramural League Maker - Example Web App
 
-Hosted at: https://intramuralleaguemaker.herokuapp.com/#/
+Hosted at: https://intramuralleaguemaker.herokuapp.com/
+
 *Web App is still under regular development but hosted version is stable*
 
 The intramural league maker can be used to create and manage "intramural" sport leagues. Administrators can create an account where they then manage a league or several leagues. The administrator creates teams, lays out the schedule, and then inputs the scores of each game. The web app handles the league standings and hosts all of the league records. The administrators simply need to supply the league players with a link to view the league at any time. Or a player can search for their league at the main page.
